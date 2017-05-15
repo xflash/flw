@@ -13,6 +13,7 @@
     <properties>
         <lwjgl.version>3.1.1</lwjgl.version>
         <joml.version>1.9.2</joml.version>
+        <pngdecoder.version>1.0</pngdecoder.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
@@ -37,6 +38,11 @@
             <groupId>org.joml</groupId>
             <artifactId>joml</artifactId>
             <version>${joml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.l33tlabs.twl</groupId>
+            <artifactId>pngdecoder</artifactId>
+            <version>${pngdecoder.version}</version>
         </dependency>
 
 
