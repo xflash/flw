@@ -1,14 +1,14 @@
-package org.xflash.gm.flw;
-
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
+package org.xflash.gm.flw.flw01;
 
 import org.lwjgl.Version;
-import static org.lwjgl.glfw.Callbacks.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * Created by coqueury on 15.05.2017.
