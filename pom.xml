@@ -18,6 +18,10 @@
 
     </properties>
 
+    <!--
+    https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/chapter9/chapter9.html
+    -->
+
     <dependencies>
         <dependency>
             <groupId>org.lwjgl</groupId>

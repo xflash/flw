@@ -6,6 +6,7 @@ import org.xflash.engine.GameItem;
 import org.xflash.engine.Utils;
 import org.xflash.engine.Window;
 import org.xflash.engine.graph.Camera;
+import org.xflash.engine.graph.Mesh;
 import org.xflash.engine.graph.ShaderProgram;
 import org.xflash.engine.graph.Transformation;
 
@@ -42,6 +43,10 @@ public class Renderer {
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
+
+        // Create uniform for default colour and the flag that controls it
+        shaderProgram.createUniform("colour");
+        shaderProgram.createUniform("useColour");
     }
 
     public void clear() {
@@ -68,11 +73,18 @@ public class Renderer {
         shaderProgram.setUniform("texture_sampler", 0);
         // Render each gameItem
         for (GameItem gameItem : gameItems) {
+            Mesh mesh = gameItem.getMesh();
+
             // Set model view matrix for this item
             shaderProgram.setUniform("modelViewMatrix",
                     transformation.getModelViewMatrix(gameItem, viewMatrix));
+
             // Render the mes for this game item
-            gameItem.getMesh().render();
+            shaderProgram.setUniform("colour", mesh.getColour());
+            shaderProgram.setUniform("useColour", mesh.isTextured() ? 0 : 1);
+
+            // Render the mes for this game item
+            mesh.render();
         }
 
         shaderProgram.unbind();
