@@ -1,50 +1,50 @@
 package org.xflash.gm.flw;
 
-import org.lwjgl.Sys;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
-import java.nio.ByteBuffer;
-
+import org.lwjgl.Version;
 import static org.lwjgl.glfw.Callbacks.*;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class FlwLauncher {
+/**
+ * Created by coqueury on 15.05.2017.
+ */
+public class Flw01 {
 
-    // We need to strongly reference callback instances.
-    private GLFWErrorCallback errorCallback;
-    private GLFWKeyCallback   keyCallback;
 
     // The window handle
     private long window;
 
     public void run() {
-        System.out.println("Hello LWJGL " + Sys.getVersion() + "!");
+        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         try {
             init();
             loop();
 
             // Release window and window callbacks
+            glfwFreeCallbacks(window);
             glfwDestroyWindow(window);
-            keyCallback.release();
         } finally {
             // Terminate GLFW and release the GLFWerrorfun
             glfwTerminate();
-            errorCallback.release();
+            glfwSetErrorCallback(null).free();
         }
     }
 
     private void init() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
-        glfwSetErrorCallback(errorCallback = errorCallbackPrint(System.err));
+        GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( glfwInit() != GL11.GL_TRUE )
+        if (!glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
+        }
 
         // Configure our window
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
@@ -56,25 +56,24 @@ public class FlwLauncher {
 
         // Create the window
         window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World!", NULL, NULL);
-        if ( window == NULL )
+        if (window == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
+        }
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                    glfwSetWindowShouldClose(window, GL_TRUE); // We will detect this in our rendering loop
+        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             }
         });
 
         // Get the resolution of the primary monitor
-        ByteBuffer vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         // Center our window
         glfwSetWindowPos(
                 window,
-                (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-                (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+                (vidmode.width() - WIDTH) / 2,
+                (vidmode.height() - HEIGHT) / 2
         );
 
         // Make the OpenGL context current
@@ -92,14 +91,14 @@ public class FlwLauncher {
         // LWJGL detects the context that is current in the current thread,
         // creates the ContextCapabilities instance and makes the OpenGL
         // bindings available for use.
-        GLContext.createFromCurrent();
+        GL.createCapabilities();
 
         // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+//        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
-        while ( glfwWindowShouldClose(window) == GL_FALSE ) {
+        while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             glfwSwapBuffers(window); // swap the color buffers
@@ -109,10 +108,4 @@ public class FlwLauncher {
             glfwPollEvents();
         }
     }
-
-    public static void main(String[] args) {
-        SharedLibraryLoader.load();
-        new FlwLauncher().run();
-    }
-
 }

@@ -11,7 +11,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <lwjgl.version>3.0.0a</lwjgl.version>
+        <lwjgl.version>3.1.1</lwjgl.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
     <dependencies>
@@ -22,23 +24,127 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
+            <artifactId>lwjgl-glfw</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>natives-windows</classifier>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
+            <artifactId>lwjgl-opengl</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>natives-osx</classifier>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${native.target}</classifier>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-platform</artifactId>
+            <artifactId>lwjgl-glfw</artifactId>
             <version>${lwjgl.version}</version>
-            <classifier>natives-linux</classifier>
+            <classifier>${native.target}</classifier>
+            <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
+            <version>${lwjgl.version}</version>
+            <classifier>${native.target}</classifier>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.6.1</version>
+            <configuration>
+                <source>1.8</source>
+                <target>1.8</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <overWriteReleases>false</overWriteReleases>
+                        <overWriteSnapshots>false</overWriteSnapshots>
+                        <overWriteIfNewer>true</overWriteIfNewer>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.0.2</version>
+
+            <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <mainClass>org.xflash.gm.flw.Main</mainClass>
+                        <classpathPrefix>lib/</classpathPrefix>
+                    </manifest>
+                    <manifestEntries>
+                        <Built-By>xFlasH</Built-By>
+                    </manifestEntries>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
+
+    </build>
+
+
+
+    <profiles>
+        <profile>
+            <id>windows-profile</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-windows</native.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-profile</id>
+            <activation>
+                <os>
+                    <family>Linux</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-linux</native.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>OSX-profile</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-osx</native.target>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
