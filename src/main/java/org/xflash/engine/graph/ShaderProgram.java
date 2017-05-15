@@ -88,7 +88,6 @@ public class ShaderProgram {
 
     }
 
-
     public void bind() {
         glUseProgram(programId);
     }
