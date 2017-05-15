@@ -21,12 +21,12 @@ public class DummyGame implements IGameLogic {
     }
 
     @Override
-    public void init() throws Exception {
+    public void init(Window window) throws Exception {
         mesh = new Mesh(new float[]{
-                -0.5f, 0.5f, 0.0f, //0
-                -0.5f, -0.5f, 0.0f, //1
-                0.5f, -0.5f, 0.0f, //2
-                0.5f, 0.5f, 0.0f, //3
+                -0.5f, 0.5f, -1.05f, //0
+                -0.5f, -0.5f, -1.05f, //1
+                0.5f, -0.5f, -1.05f, //2
+                0.5f, 0.5f, -1.05f, //3
         },
                 new float[]{
                         0.5f, 0.0f, 0.0f,
@@ -39,7 +39,7 @@ public class DummyGame implements IGameLogic {
                         3, 1, 2,
                 });
 
-        renderer.init();
+        renderer.init(window);
 
     }
 

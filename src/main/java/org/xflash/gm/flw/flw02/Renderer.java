@@ -1,6 +1,7 @@
 package org.xflash.gm.flw.flw02;
 
 
+import org.joml.Matrix4f;
 import org.xflash.engine.Utils;
 import org.xflash.engine.Window;
 import org.xflash.engine.graph.Mesh;
@@ -14,20 +15,27 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Renderer {
 
-    private int vboId;
 
-    private int vaoId;
-
+    /**
+     * Field of View in Radians
+     */
+    private static final float FOV = (float) Math.toRadians(60.0f);
+    private static final float Z_NEAR = 0.01f;
+    private static final float Z_FAR = 1000.f;
     private ShaderProgram shaderProgram;
+    private Matrix4f projectionMatrix;
 
-    public Renderer() {
-    }
 
-    public void init() throws Exception {
+    public void init(Window window) throws Exception {
         shaderProgram = new ShaderProgram();
         shaderProgram.createVertexShader(Utils.loadResource("/vertex.vs"));
         shaderProgram.createFragmentShader(Utils.loadResource("/fragment.fs"));
         shaderProgram.link();
+
+        // Create projection matrix
+        float aspectRatio = (float) window.getWidth() / window.getHeight();
+        projectionMatrix = new Matrix4f().perspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+        shaderProgram.createUniform("projectionMatrix");
 
     }
 
@@ -45,11 +53,13 @@ public class Renderer {
 
 
         shaderProgram.bind();
+        shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
         // Draw the mesh
         glBindVertexArray(mesh.getVaoId());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+
         glDrawElements(GL_TRIANGLES, mesh.getVertexCount(), GL_UNSIGNED_INT, 0);
 
         // Restore state
