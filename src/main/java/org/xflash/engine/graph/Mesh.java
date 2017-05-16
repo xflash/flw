@@ -1,6 +1,5 @@
 package org.xflash.engine.graph;
 
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -18,17 +17,13 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
-    private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
-
     private final int vaoId;
 
     private final List<Integer> vboIdList;
 
     private final int vertexCount;
 
-    private Texture texture;
-
-    private Vector3f colour;
+    private Material material;
 
     public Mesh(float[] positions, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer posBuffer = null;
@@ -36,7 +31,6 @@ public class Mesh {
         FloatBuffer vecNormalsBuffer = null;
         IntBuffer indicesBuffer = null;
         try {
-            colour = DEFAULT_COLOUR;
             vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 
@@ -96,24 +90,12 @@ public class Mesh {
         }
     }
 
-    public boolean isTextured() {
-        return this.texture != null;
+    public Material getMaterial() {
+        return material;
     }
 
-    public Texture getTexture() {
-        return this.texture;
-    }
-
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public Vector3f getColour() {
-        return this.colour;
-    }
-
-    public void setColour(Vector3f colour) {
-        this.colour = colour;
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public int getVaoId() {
@@ -125,6 +107,7 @@ public class Mesh {
     }
 
     public void render() {
+        Texture texture = material.getTexture();
         if (texture != null) {
             // Activate firs texture bank
             glActiveTexture(GL_TEXTURE0);
@@ -158,9 +141,9 @@ public class Mesh {
         }
 
         // Delete the texture
+        Texture texture = material.getTexture();
         if (texture != null) {
             texture.cleanup();
-            texture = null;
         }
 
         // Delete the VAO
