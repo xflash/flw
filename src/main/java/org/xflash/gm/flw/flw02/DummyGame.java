@@ -2,6 +2,7 @@ package org.xflash.gm.flw.flw02;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.xflash.engine.GameItem;
 import org.xflash.engine.IGameLogic;
 import org.xflash.engine.MouseInput;
@@ -41,45 +42,50 @@ public class DummyGame implements IGameLogic {
         renderer.init(window);
 
         float reflectance = 1f;
-        //Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
-        //Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
+        Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
+        Material material = new Material(new Vector4f(0.2f, 0.5f, 0.5f, 0), reflectance);
 
-        Mesh mesh = OBJLoader.loadMesh("/models/cube.obj");
-        Texture texture = new Texture("/textures/grassblock.png");
-        Material material = new Material(texture, reflectance);
-
+//        Mesh mesh = OBJLoader.loadMesh("/models/cube.obj");
+//        Texture texture = new Texture("/textures/grassblock.png");
+//        Material material = new Material(texture, reflectance);
         mesh.setMaterial(material);
-        GameItem gameItem = new GameItem(mesh);
-        gameItem.setScale(0.5f);
-        gameItem.setPosition(0, 0, -2);
         //gameItem.setPosition(0, 0, -2);
-        //gameItem.setScale(0.1f);
+//        gameItem.setScale(0.1f);
         //gameItem.setPosition(0, 0, -2);
         //gameItem.setPosition(0, 0, -0.2f);
-        gameItems = new GameItem[]{gameItem};
+        gameItems = new GameItem[]{
+                new GameItem(mesh)
+                    .setScale(0.5f)
+                    .setPosition(0, 0, -2),
+        };
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
 
         // Point Light
-        Vector3f lightPosition = new Vector3f(0, 0, 1);
-        float lightIntensity = 1.0f;
-        PointLight pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-        pointLight.setAttenuation(att);
+
+        PointLight pointLight = new PointLight(
+                new Vector3f(1, 1, 1),
+                new Vector3f(0, 0, 1),
+                1.0f);
+        pointLight.setAttenuation(new PointLight.Attenuation(0.0f, 0.0f, 1.0f));
         pointLightList = new PointLight[]{pointLight};
 
         // Spot Light
-        lightPosition = new Vector3f(0, 0.0f, 10f);
-        pointLight = new PointLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
-        att = new PointLight.Attenuation(0.0f, 0.0f, 0.02f);
-        pointLight.setAttenuation(att);
-        Vector3f coneDir = new Vector3f(0, 0, -1);
-        float cutoff = (float) Math.cos(Math.toRadians(140));
-        SpotLight spotLight = new SpotLight(pointLight, coneDir, cutoff);
-        spotLightList = new SpotLight[]{spotLight, new SpotLight(spotLight)};
+        pointLight = new PointLight(
+                new Vector3f(1, 1, 1),
+                new Vector3f(0, 0.0f, 10f),
+                1.0f);
+        pointLight.setAttenuation(new PointLight.Attenuation(0.0f, 0.0f, 0.02f));
 
-        lightPosition = new Vector3f(-1, 0, 0);
-        directionalLight = new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity);
+        SpotLight spotLight = new SpotLight(pointLight,
+                new Vector3f(0, 0, -1),
+                (float) Math.cos(Math.toRadians(180)));
+        spotLightList = new SpotLight[]{spotLight, new SpotLight(spotLight)};
+//        spotLightList = new SpotLight[]{};
+
+        directionalLight = new DirectionalLight(
+                new Vector3f(1, 1, 1),
+                new Vector3f(-1, 0, 0), 1.0f);
     }
 
     @Override
@@ -100,11 +106,13 @@ public class DummyGame implements IGameLogic {
         } else if (window.isKeyPressed(GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
-        float lightPos = spotLightList[0].getPointLight().getPosition().z;
-        if (window.isKeyPressed(GLFW_KEY_N)) {
-            this.spotLightList[0].getPointLight().getPosition().z = lightPos + 0.1f;
-        } else if (window.isKeyPressed(GLFW_KEY_M)) {
-            this.spotLightList[0].getPointLight().getPosition().z = lightPos - 0.1f;
+        if(spotLightList.length>=1) {
+            float lightPos = spotLightList[0].getPointLight().getPosition().z;
+            if (window.isKeyPressed(GLFW_KEY_N)) {
+                this.spotLightList[0].getPointLight().getPosition().z = lightPos + 0.1f;
+            } else if (window.isKeyPressed(GLFW_KEY_M)) {
+                this.spotLightList[0].getPointLight().getPosition().z = lightPos - 0.1f;
+            }
         }
     }
 
@@ -126,9 +134,10 @@ public class DummyGame implements IGameLogic {
         } else if (spotAngle < -2) {
             spotInc = 1;
         }
-        double spotAngleRad = Math.toRadians(spotAngle);
-        Vector3f coneDir = spotLightList[0].getConeDirection();
-        coneDir.y = (float) Math.sin(spotAngleRad);
+        if(spotLightList.length>=1) {
+            spotLightList[0].getConeDirection().y =
+                    (float) Math.sin(Math.toRadians(spotAngle));
+        }
 
         // Update directional light direction, intensity and colour
         lightAngle += 1.1f;
