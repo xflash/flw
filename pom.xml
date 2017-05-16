@@ -158,7 +158,7 @@
                 </os>
             </activation>
             <properties>
-                <native.target>natives-osx</native.target>
+                <native.target>natives-macos</native.target>
             </properties>
         </profile>
     </profiles>

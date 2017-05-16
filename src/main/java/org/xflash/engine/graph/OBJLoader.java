@@ -23,30 +23,26 @@ public class OBJLoader {
             switch (tokens[0]) {
                 case "v":
                     // Geometric vertex
-                    Vector3f vec3f = new Vector3f(
+                    vertices.add(new Vector3f(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3]));
-                    vertices.add(vec3f);
+                            Float.parseFloat(tokens[3])));
                     break;
                 case "vt":
                     // Texture coordinate
-                    Vector2f vec2f = new Vector2f(
+                    textures.add(new Vector2f(
                             Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2]));
-                    textures.add(vec2f);
+                            Float.parseFloat(tokens[2])));
                     break;
                 case "vn":
                     // Vertex normal
-                    Vector3f vec3fNorm = new Vector3f(
+                    normals.add(new Vector3f(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3]));
-                    normals.add(vec3fNorm);
+                            Float.parseFloat(tokens[3])));
                     break;
                 case "f":
-                    Face face = new Face(tokens[1], tokens[2], tokens[3]);
-                    faces.add(face);
+                    faces.add(new Face(tokens[1], tokens[2], tokens[3]));
                     break;
                 default:
                     // Ignore other lines
@@ -59,7 +55,7 @@ public class OBJLoader {
     private static Mesh reorderLists(List<Vector3f> posList, List<Vector2f> textCoordList,
                                      List<Vector3f> normList, List<Face> facesList) {
 
-        List<Integer> indices = new ArrayList();
+        List<Integer> indices = new ArrayList<>();
         // Create position array in the order it has been declared
         float[] posArr = new float[posList.size() * 3];
         int i = 0;
@@ -73,21 +69,20 @@ public class OBJLoader {
         float[] normArr = new float[posList.size() * 3];
 
         for (Face face : facesList) {
-            IdxGroup[] faceVertexIndices = face.getFaceVertexIndices();
-            for (IdxGroup indValue : faceVertexIndices) {
-                processFaceVertex(indValue, textCoordList, normList,
-                        indices, textCoordArr, normArr);
+            for (IdxGroup indValue : face.getFaceVertexIndices()) {
+                processFaceVertex(indValue, textCoordList, normList, indices, textCoordArr, normArr);
             }
         }
-        int[] indicesArr = new int[indices.size()];
-        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
-        Mesh mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
-        return mesh;
+        return new Mesh(posArr, textCoordArr, normArr,
+                indices.stream().mapToInt((Integer v) -> v).toArray());
     }
 
-    private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoordList,
-                                          List<Vector3f> normList, List<Integer> indicesList,
-                                          float[] texCoordArr, float[] normArr) {
+    private static void processFaceVertex(IdxGroup indices,
+                                          List<Vector2f> textCoordList,
+                                          List<Vector3f> normList,
+                                          List<Integer> indicesList,
+                                          float[] texCoordArr,
+                                          float[] normArr) {
 
         // Set index for vertex coordinates
         int posIndex = indices.idxPos;
@@ -115,7 +110,7 @@ public class OBJLoader {
          */
         private IdxGroup[] idxGroups = new IdxGroup[3];
 
-        public Face(String v1, String v2, String v3) {
+        Face(String v1, String v2, String v3) {
             idxGroups = new IdxGroup[3];
             // Parse the lines
             idxGroups[0] = parseLine(v1);
@@ -141,22 +136,22 @@ public class OBJLoader {
             return idxGroup;
         }
 
-        public IdxGroup[] getFaceVertexIndices() {
+        IdxGroup[] getFaceVertexIndices() {
             return idxGroups;
         }
     }
 
-    protected static class IdxGroup {
+    static class IdxGroup {
 
-        public static final int NO_VALUE = -1;
+        static final int NO_VALUE = -1;
 
-        public int idxPos;
+        int idxPos;
 
-        public int idxTextCoord;
+        int idxTextCoord;
 
-        public int idxVecNormal;
+        int idxVecNormal;
 
-        public IdxGroup() {
+        IdxGroup() {
             idxPos = NO_VALUE;
             idxTextCoord = NO_VALUE;
             idxVecNormal = NO_VALUE;
