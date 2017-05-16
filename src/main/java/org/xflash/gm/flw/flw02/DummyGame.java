@@ -48,12 +48,12 @@ public class DummyGame implements IGameLogic {
         gameItems = new GameItem[]{gameItem};
 
         ambientLight = new Vector3f(0.3f, 0.3f, 0.3f);
-        Vector3f lightColour = new Vector3f(1, 1, 1);
-        Vector3f lightPosition = new Vector3f(0, 0, 1);
-        float lightIntensity = 1.0f;
-        pointLight = new PointLight(lightColour, lightPosition, lightIntensity);
-        PointLight.Attenuation att = new PointLight.Attenuation(0.0f, 0.0f, 1.0f);
-        pointLight.setAttenuation(att);
+
+        pointLight = new PointLight(
+                new Vector3f(1, 1, 1),
+                new Vector3f(0, 0, 1),
+                1.0f);
+        pointLight.setAttenuation(new PointLight.Attenuation(0.0f, 0.0f, 1.0f));
     }
 
     @Override
