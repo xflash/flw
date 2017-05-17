@@ -5,26 +5,28 @@ import org.xflash.engine.GameItem;
 import org.xflash.engine.IHud;
 import org.xflash.engine.TextItem;
 import org.xflash.engine.Window;
+import org.xflash.engine.graph.FontTexture;
 import org.xflash.engine.graph.Material;
 import org.xflash.engine.graph.Mesh;
 import org.xflash.engine.graph.OBJLoader;
 
+import java.awt.*;
+
 public class Hud implements IHud {
 
-    private static final int FONT_COLS = 16;
+    private static final Font FONT = new Font("Arial", Font.PLAIN, 20);
 
-    private static final int FONT_ROWS = 16;
-
-    private static final String FONT_TEXTURE = "/textures/font_texture.png";
+    private static final String CHARSET = "ISO-8859-1";
 
     private final GameItem[] gameItems;
 
     private final TextItem statusTextItem;
+
     private final GameItem compassItem;
 
-
     public Hud(String statusText) throws Exception {
-        this.statusTextItem = new TextItem(statusText, FONT_TEXTURE, FONT_COLS, FONT_ROWS);
+        FontTexture fontTexture = new FontTexture(FONT, CHARSET);
+        this.statusTextItem = new TextItem(statusText, fontTexture);
         this.statusTextItem.getMesh().getMaterial().setAmbientColour(new Vector4f(1, 1, 1, 1));
 
         // Create compass
