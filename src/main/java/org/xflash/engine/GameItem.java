@@ -4,17 +4,24 @@ import org.joml.Vector3f;
 import org.xflash.engine.graph.Mesh;
 
 public class GameItem {
-    private final Mesh mesh;
+
+    private Mesh mesh;
 
     private final Vector3f position;
-    private final Vector3f rotation;
+
     private float scale;
 
-    public GameItem(Mesh mesh) {
-        this.mesh = mesh;
+    private final Vector3f rotation;
+
+    public GameItem() {
         position = new Vector3f(0, 0, 0);
         scale = 1;
         rotation = new Vector3f(0, 0, 0);
+    }
+
+    public GameItem(Mesh mesh) {
+        this();
+        this.mesh = mesh;
     }
 
     public Vector3f getPosition() {
@@ -51,5 +58,7 @@ public class GameItem {
         return mesh;
     }
 
-
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
+    }
 }
