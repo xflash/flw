@@ -22,6 +22,7 @@ public class DummyGame implements IGameLogic {
     private Scene scene;
     private Hud hud;
     private float lightAngle;
+    private Terrain terrain;
 
     public DummyGame() {
         renderer = new Renderer();
@@ -36,18 +37,15 @@ public class DummyGame implements IGameLogic {
 
         scene = new Scene();
 
-        float skyBoxScale = 50.0f;
-        float terrainScale = 10;
-        int terrainSize = 3;
-        float minY = -0.1f;
-        float maxY = 0.1f;
-        int textInc = 40;
-        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "/textures/heightmap.png", "/textures/terrain.png", textInc);
+        terrain = new Terrain(3, 10f, -0.1f, 0.1f,
+                "/textures/heightmap.png",
+                "/textures/terrain.png",
+                40);
         scene.setGameItems(terrain.getGameItems());
 
         // Setup  SkyBox
         SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
-        skyBox.setScale(skyBoxScale);
+        skyBox.setScale(50.0f);
         scene.setSkyBox(skyBox);
 
         // Setup Lights
@@ -108,12 +106,22 @@ public class DummyGame implements IGameLogic {
         }
 
         // Update camera position
+        Vector3f prevPos = new Vector3f(camera.getPosition());
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
+        // Check if there has been a collision. If true, set the y position to
+        // the maximum height
+        float height = terrain.getHeight(camera.getPosition());
+        if (camera.getPosition().y <= height) {
+            camera.setPosition(prevPos.x, prevPos.y, prevPos.z);
+        }
+
+        this.hud.setStatusText(String.format("Camera %f,%f,%f", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z));
 
         // Update directional light direction, intensity and colour
         SceneLight sceneLight = scene.getSceneLight();
         DirectionalLight directionalLight = sceneLight.getDirectionalLight();
-        lightAngle += 0.5f;
+//        lightAngle += 0.5f;
+        lightAngle = 45f;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 360) {
@@ -121,7 +129,7 @@ public class DummyGame implements IGameLogic {
             }
             sceneLight.getSkyBoxLight().set(0.3f, 0.3f, 0.3f);
         } else if (lightAngle <= -80 || lightAngle >= 80) {
-            float factor = 1 - (float) (Math.abs(lightAngle) - 80) / 10.0f;
+            float factor = 1 - (Math.abs(lightAngle) - 80) / 10.0f;
             sceneLight.getSkyBoxLight().set(factor, factor, factor);
             directionalLight.setIntensity(factor);
             directionalLight.getColor().y = Math.max(factor, 0.9f);
