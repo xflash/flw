@@ -2,13 +2,16 @@ package org.xflash.engine;
 
 
 import org.joml.Vector3f;
-import org.xflash.engine.graph.DirectionalLight;
-import org.xflash.engine.graph.PointLight;
-import org.xflash.engine.graph.SpotLight;
+import org.xflash.engine.graph.lights.DirectionalLight;
+import org.xflash.engine.graph.lights.PointLight;
+import org.xflash.engine.graph.lights.SpotLight;
+
 
 public class SceneLight {
 
     private Vector3f ambientLight;
+
+    private Vector3f skyBoxLight;
 
     private PointLight[] pointLightList;
 
@@ -46,6 +49,14 @@ public class SceneLight {
 
     public void setDirectionalLight(DirectionalLight directionalLight) {
         this.directionalLight = directionalLight;
+    }
+
+    public Vector3f getSkyBoxLight() {
+        return skyBoxLight;
+    }
+
+    public void setSkyBoxLight(Vector3f skyBoxLight) {
+        this.skyBoxLight = skyBoxLight;
     }
 
 }

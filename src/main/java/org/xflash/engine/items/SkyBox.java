@@ -1,4 +1,4 @@
-package org.xflash.engine;
+package org.xflash.engine.items;
 
 import org.xflash.engine.graph.Material;
 import org.xflash.engine.graph.Mesh;

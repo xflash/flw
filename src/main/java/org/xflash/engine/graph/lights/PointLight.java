@@ -1,13 +1,17 @@
-package org.xflash.engine.graph;
+package org.xflash.engine.graph.lights;
 
 
 import org.joml.Vector3f;
 
+
 public class PointLight {
 
-    protected float intensity;
     private Vector3f color;
+
     private Vector3f position;
+
+    private float intensity;
+
     private Attenuation attenuation;
 
     public PointLight(Vector3f color, Vector3f position, float intensity) {

@@ -4,6 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
+import org.xflash.engine.graph.lights.DirectionalLight;
+import org.xflash.engine.graph.lights.PointLight;
+import org.xflash.engine.graph.lights.SpotLight;
 
 import java.nio.FloatBuffer;
 import java.util.HashMap;

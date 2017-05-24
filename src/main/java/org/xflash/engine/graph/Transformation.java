@@ -3,7 +3,8 @@ package org.xflash.engine.graph;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.xflash.engine.GameItem;
+import org.xflash.engine.items.GameItem;
+
 
 
 public class Transformation {

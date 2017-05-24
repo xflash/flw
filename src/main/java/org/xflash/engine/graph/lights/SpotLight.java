@@ -1,4 +1,4 @@
-package org.xflash.engine.graph;
+package org.xflash.engine.graph.lights;
 
 import org.joml.Vector3f;
 

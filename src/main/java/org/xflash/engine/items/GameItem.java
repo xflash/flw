@@ -1,17 +1,15 @@
-package org.xflash.engine;
+package org.xflash.engine.items;
 
 import org.joml.Vector3f;
 import org.xflash.engine.graph.Mesh;
 
+
 public class GameItem {
 
-    private Mesh mesh;
-
     private final Vector3f position;
-
-    private float scale;
-
     private final Vector3f rotation;
+    private Mesh mesh;
+    private float scale;
 
     public GameItem() {
         position = new Vector3f(0, 0, 0);
@@ -28,20 +26,18 @@ public class GameItem {
         return position;
     }
 
-    public GameItem setPosition(float x, float y, float z) {
+    public void setPosition(float x, float y, float z) {
         this.position.x = x;
         this.position.y = y;
         this.position.z = z;
-        return this;
     }
 
     public float getScale() {
         return scale;
     }
 
-    public GameItem setScale(float scale) {
+    public void setScale(float scale) {
         this.scale = scale;
-        return this;
     }
 
     public Vector3f getRotation() {

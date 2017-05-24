@@ -1,14 +1,14 @@
 package org.xflash.gm.flw.flw02;
 
 import org.joml.Vector4f;
-import org.xflash.engine.GameItem;
 import org.xflash.engine.IHud;
-import org.xflash.engine.TextItem;
 import org.xflash.engine.Window;
 import org.xflash.engine.graph.FontTexture;
 import org.xflash.engine.graph.Material;
 import org.xflash.engine.graph.Mesh;
 import org.xflash.engine.graph.OBJLoader;
+import org.xflash.engine.items.GameItem;
+import org.xflash.engine.items.TextItem;
 
 import java.awt.*;
 

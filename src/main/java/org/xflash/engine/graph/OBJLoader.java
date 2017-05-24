@@ -23,26 +23,30 @@ public class OBJLoader {
             switch (tokens[0]) {
                 case "v":
                     // Geometric vertex
-                    vertices.add(new Vector3f(
+                    Vector3f vec3f = new Vector3f(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])));
+                            Float.parseFloat(tokens[3]));
+                    vertices.add(vec3f);
                     break;
                 case "vt":
                     // Texture coordinate
-                    textures.add(new Vector2f(
+                    Vector2f vec2f = new Vector2f(
                             Float.parseFloat(tokens[1]),
-                            Float.parseFloat(tokens[2])));
+                            Float.parseFloat(tokens[2]));
+                    textures.add(vec2f);
                     break;
                 case "vn":
                     // Vertex normal
-                    normals.add(new Vector3f(
+                    Vector3f vec3fNorm = new Vector3f(
                             Float.parseFloat(tokens[1]),
                             Float.parseFloat(tokens[2]),
-                            Float.parseFloat(tokens[3])));
+                            Float.parseFloat(tokens[3]));
+                    normals.add(vec3fNorm);
                     break;
                 case "f":
-                    faces.add(new Face(tokens[1], tokens[2], tokens[3]));
+                    Face face = new Face(tokens[1], tokens[2], tokens[3]);
+                    faces.add(face);
                     break;
                 default:
                     // Ignore other lines
@@ -69,20 +73,21 @@ public class OBJLoader {
         float[] normArr = new float[posList.size() * 3];
 
         for (Face face : facesList) {
-            for (IdxGroup indValue : face.getFaceVertexIndices()) {
-                processFaceVertex(indValue, textCoordList, normList, indices, textCoordArr, normArr);
+            IdxGroup[] faceVertexIndices = face.getFaceVertexIndices();
+            for (IdxGroup indValue : faceVertexIndices) {
+                processFaceVertex(indValue, textCoordList, normList,
+                        indices, textCoordArr, normArr);
             }
         }
-        return new Mesh(posArr, textCoordArr, normArr,
-                indices.stream().mapToInt((Integer v) -> v).toArray());
+        int[] indicesArr = new int[indices.size()];
+        indicesArr = indices.stream().mapToInt((Integer v) -> v).toArray();
+        Mesh mesh = new Mesh(posArr, textCoordArr, normArr, indicesArr);
+        return mesh;
     }
 
-    private static void processFaceVertex(IdxGroup indices,
-                                          List<Vector2f> textCoordList,
-                                          List<Vector3f> normList,
-                                          List<Integer> indicesList,
-                                          float[] texCoordArr,
-                                          float[] normArr) {
+    private static void processFaceVertex(IdxGroup indices, List<Vector2f> textCoordList,
+                                          List<Vector3f> normList, List<Integer> indicesList,
+                                          float[] texCoordArr, float[] normArr) {
 
         // Set index for vertex coordinates
         int posIndex = indices.idxPos;
@@ -110,7 +115,7 @@ public class OBJLoader {
          */
         private IdxGroup[] idxGroups = new IdxGroup[3];
 
-        Face(String v1, String v2, String v3) {
+        public Face(String v1, String v2, String v3) {
             idxGroups = new IdxGroup[3];
             // Parse the lines
             idxGroups[0] = parseLine(v1);
@@ -136,22 +141,22 @@ public class OBJLoader {
             return idxGroup;
         }
 
-        IdxGroup[] getFaceVertexIndices() {
+        public IdxGroup[] getFaceVertexIndices() {
             return idxGroups;
         }
     }
 
-    static class IdxGroup {
+    protected static class IdxGroup {
 
-        static final int NO_VALUE = -1;
+        public static final int NO_VALUE = -1;
 
-        int idxPos;
+        public int idxPos;
 
-        int idxTextCoord;
+        public int idxTextCoord;
 
-        int idxVecNormal;
+        public int idxVecNormal;
 
-        IdxGroup() {
+        public IdxGroup() {
             idxPos = NO_VALUE;
             idxTextCoord = NO_VALUE;
             idxVecNormal = NO_VALUE;

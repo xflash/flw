@@ -5,11 +5,17 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.xflash.engine.*;
+import org.xflash.engine.graph.lights.DirectionalLight;
+import org.xflash.engine.graph.lights.PointLight;
+import org.xflash.engine.graph.lights.SpotLight;
+import org.xflash.engine.items.GameItem;
+import org.xflash.engine.items.SkyBox;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
+
 
 
 public class Renderer {
@@ -127,7 +133,7 @@ public class Renderer {
         viewMatrix.m32(0);
         Matrix4f modelViewMatrix = transformation.buildModelViewMatrix(skyBox, viewMatrix);
         skyBoxShaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
-        skyBoxShaderProgram.setUniform("ambientLight", scene.getSceneLight().getAmbientLight());
+        skyBoxShaderProgram.setUniform("ambientLight", scene.getSceneLight().getSkyBoxLight());
 
         scene.getSkyBox().getMesh().render();
 

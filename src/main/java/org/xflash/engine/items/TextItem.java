@@ -1,12 +1,14 @@
-package org.xflash.engine;
+package org.xflash.engine.items;
 
 
+import org.xflash.engine.Utils;
 import org.xflash.engine.graph.FontTexture;
 import org.xflash.engine.graph.Material;
 import org.xflash.engine.graph.Mesh;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class TextItem extends GameItem {
 
@@ -26,10 +28,10 @@ public class TextItem extends GameItem {
     }
 
     private Mesh buildMesh() {
-        List<Float> positions = new ArrayList<>();
-        List<Float> textCoords = new ArrayList<>();
+        List<Float> positions = new ArrayList();
+        List<Float> textCoords = new ArrayList();
         float[] normals   = new float[0];
-        List<Integer> indices   = new ArrayList<>();
+        List<Integer> indices = new ArrayList();
         char[] characters = text.toCharArray();
         int numChars = characters.length;
 

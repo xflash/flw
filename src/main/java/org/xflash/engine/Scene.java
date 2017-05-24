@@ -2,11 +2,14 @@ package org.xflash.engine;
 
 
 import org.xflash.engine.graph.Mesh;
+import org.xflash.engine.items.GameItem;
+import org.xflash.engine.items.SkyBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class Scene {
 
@@ -35,6 +38,12 @@ public class Scene {
                 meshMap.put(mesh, list);
             }
             list.add(gameItem);
+        }
+    }
+
+    public void cleanup() {
+        for (Mesh mesh : meshMap.keySet()) {
+            mesh.cleanUp();
         }
     }
 

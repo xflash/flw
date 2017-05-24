@@ -3,10 +3,11 @@ package org.xflash.gm.flw.flw02;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.xflash.engine.*;
-import org.xflash.engine.graph.*;
-
-import java.util.List;
-import java.util.Map;
+import org.xflash.engine.graph.Camera;
+import org.xflash.engine.graph.Renderer;
+import org.xflash.engine.graph.lights.DirectionalLight;
+import org.xflash.engine.items.SkyBox;
+import org.xflash.engine.items.Terrain;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -35,42 +36,14 @@ public class DummyGame implements IGameLogic {
 
         scene = new Scene();
 
-        // Setup  GameItems
-        float reflectance = 1f;
-        Mesh mesh = OBJLoader.loadMesh("/models/cube.obj");
-        Texture texture = new Texture("/textures/grassblock.png");
-        Material material = new Material(texture, reflectance);
-        mesh.setMaterial(material);
-
-        float blockScale = 0.5f;
         float skyBoxScale = 50.0f;
-        float extension = 2.0f;
-
-        float startx = extension * (-skyBoxScale + blockScale);
-        float startz = extension * (skyBoxScale - blockScale);
-        float starty = -1.0f;
-        float inc = blockScale * 2;
-
-        float posx = startx;
-        float posz = startz;
-        float incy = 0.0f;
-        int NUM_ROWS = (int) (extension * skyBoxScale * 2 / inc);
-        int NUM_COLS = (int) (extension * skyBoxScale * 2 / inc);
-        GameItem[] gameItems = new GameItem[NUM_ROWS * NUM_COLS];
-        for (int i = 0; i < NUM_ROWS; i++) {
-            for (int j = 0; j < NUM_COLS; j++) {
-                GameItem gameItem = new GameItem(mesh);
-                gameItem.setScale(blockScale);
-                incy = Math.random() > 0.9f ? blockScale * 2 : 0f;
-                gameItem.setPosition(posx, starty + incy, posz);
-                gameItems[i * NUM_COLS + j] = gameItem;
-
-                posx += inc;
-            }
-            posx = startx;
-            posz -= inc;
-        }
-        scene.setGameItems(gameItems);
+        float terrainScale = 10;
+        int terrainSize = 3;
+        float minY = -0.1f;
+        float maxY = 0.1f;
+        int textInc = 40;
+        Terrain terrain = new Terrain(terrainSize, terrainScale, minY, maxY, "/textures/heightmap.png", "/textures/terrain.png", textInc);
+        scene.setGameItems(terrain.getGameItems());
 
         // Setup  SkyBox
         SkyBox skyBox = new SkyBox("/models/skybox.obj", "/textures/skybox.png");
@@ -83,9 +56,10 @@ public class DummyGame implements IGameLogic {
         // Create HUD
         hud = new Hud("DEMO");
 
-        camera.getPosition().x = 0.65f;
-        camera.getPosition().y = 1.15f;
-        camera.getPosition().y = 4.34f;
+        camera.getPosition().x = 0.0f;
+        camera.getPosition().z = 0.0f;
+        camera.getPosition().y = -0.2f;
+        camera.getRotation().x = 10.f;
     }
 
     private void setupLights() {
@@ -93,11 +67,12 @@ public class DummyGame implements IGameLogic {
         scene.setSceneLight(sceneLight);
 
         // Ambient Light
-        sceneLight.setAmbientLight(new Vector3f(1.0f, 1.0f, 1.0f));
+        sceneLight.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
+        sceneLight.setSkyBoxLight(new Vector3f(1.0f, 1.0f, 1.0f));
 
         // Directional Light
         float lightIntensity = 1.0f;
-        Vector3f lightPosition = new Vector3f(-1, 0, 0);
+        Vector3f lightPosition = new Vector3f(1, 1, 0);
         sceneLight.setDirectionalLight(new DirectionalLight(new Vector3f(1, 1, 1), lightPosition, lightIntensity));
     }
 
@@ -135,25 +110,24 @@ public class DummyGame implements IGameLogic {
         // Update camera position
         camera.movePosition(cameraInc.x * CAMERA_POS_STEP, cameraInc.y * CAMERA_POS_STEP, cameraInc.z * CAMERA_POS_STEP);
 
-        SceneLight sceneLight = scene.getSceneLight();
-
         // Update directional light direction, intensity and colour
+        SceneLight sceneLight = scene.getSceneLight();
         DirectionalLight directionalLight = sceneLight.getDirectionalLight();
-        lightAngle += 1.1f;
+        lightAngle += 0.5f;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
             if (lightAngle >= 360) {
                 lightAngle = -90;
             }
-            sceneLight.getAmbientLight().set(0.3f, 0.3f, 0.4f);
+            sceneLight.getSkyBoxLight().set(0.3f, 0.3f, 0.3f);
         } else if (lightAngle <= -80 || lightAngle >= 80) {
             float factor = 1 - (float) (Math.abs(lightAngle) - 80) / 10.0f;
-            sceneLight.getAmbientLight().set(factor, factor, factor);
+            sceneLight.getSkyBoxLight().set(factor, factor, factor);
             directionalLight.setIntensity(factor);
             directionalLight.getColor().y = Math.max(factor, 0.9f);
             directionalLight.getColor().z = Math.max(factor, 0.5f);
         } else {
-            sceneLight.getAmbientLight().set(1, 1, 1);
+            sceneLight.getSkyBoxLight().set(1.0f, 1.0f, 1.0f);
             directionalLight.setIntensity(1);
             directionalLight.getColor().x = 1;
             directionalLight.getColor().y = 1;
@@ -173,11 +147,10 @@ public class DummyGame implements IGameLogic {
     @Override
     public void cleanup() {
         renderer.cleanup();
-        Map<Mesh, List<GameItem>> mapMeshes = scene.getGameMeshes();
-        for (Mesh mesh : mapMeshes.keySet()) {
-            mesh.cleanUp();
+        scene.cleanup();
+        if (hud != null) {
+            hud.cleanup();
         }
-        hud.cleanup();
     }
 
 }

@@ -1,7 +1,7 @@
 package org.xflash.engine.graph;
 
 import org.lwjgl.system.MemoryUtil;
-import org.xflash.engine.GameItem;
+import org.xflash.engine.items.GameItem;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -35,7 +35,7 @@ public class Mesh {
         IntBuffer indicesBuffer = null;
         try {
             vertexCount = indices.length;
-            vboIdList = new ArrayList<>();
+            vboIdList = new ArrayList();
 
             vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);
